@@ -1,3 +1,7 @@
+# https://www.geeksforgeeks.org/python-reading-contents-of-pdf-using-ocr-optical-character-recognition/
+
+# https://www.geeksforgeeks.org/working-with-pdf-files-in-python/
+
 # Import libraries 
 from PIL import Image 
 import pytesseract 
@@ -13,8 +17,8 @@ Part #1 : Converting PDF to images
 '''
   
 # Store all the pages of the PDF in a variable 
-pages = convert_from_path(PDF_file, 500) 
-  
+pages = convert_from_path(PDF_file, 200, poppler_path= r"D:\PythonProjects\PDFScanner\poppler\bin") 
+
 # Counter to store images of each page of PDF to image 
 image_counter = 1
   
@@ -35,21 +39,25 @@ for page in pages:
   
     # Increment the counter to update filename 
     image_counter = image_counter + 1
-  
+
 ''' 
 Part #2 - Recognizing text from the images using OCR 
 '''
-    3
+
 # Variable to get count of total number of pages 
 filelimit = image_counter-1
-  
+
 # Creating a text file to write the output 
 outfile = "out_text.txt"
   
 # Open the file in append mode so that  
 # All contents of all images are added to the same file 
+
+pytesseract.pytesseract.tesseract_cmd = r'D:\Tesseract\tesseract.exe'
+
 f = open(outfile, "a") 
-  
+
+find_string = "discovery"
 # Iterate from 1 to total number of pages 
 for i in range(1, filelimit + 1): 
   
@@ -62,7 +70,16 @@ for i in range(1, filelimit + 1):
     filename = "page_"+str(i)+".jpg"
           
     # Recognize the text as string in image using pytesserct 
+    page_number = str(i)
+    print(page_number)
     text = str(((pytesseract.image_to_string(Image.open(filename))))) 
+    combined = str
+    if find_string in text:
+        print(text.find(find_string))
+        combined = page_number + text
+        print(combined)
+
+
   
     # The recognized text is stored in variable text 
     # Any string processing may be applied on text 
@@ -73,10 +90,10 @@ for i in range(1, filelimit + 1):
     # Eg: This is a sample text this word here GeeksF- 
     # orGeeks is half on first line, remaining on next. 
     # To remove this, we replace every '-\n' to ''. 
-    text = text.replace('-\n', '')     
-  
+        text = text.replace('-\n', '')     
     # Finally, write the processed text to the file. 
-    f.write(text) 
+        f.write(combined) 
+
   
 # Close the file after writing all the text. 
 f.close() 
